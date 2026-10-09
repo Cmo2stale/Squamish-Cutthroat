@@ -76,22 +76,6 @@
     <p class="legend">Three tables: a <b>season summary</b> by stream, every <b>survey</b> with its duration and conditions, and every <b>redd</b> with its measurements, age and GPS point.</p>
   </section>
 
-  <details class="panel" id="howto">
-    <summary><h2>Field guide</h2><span class="sec-sub">learn the survey</span></summary>
-    <div class="panel-in">
-      <p class="guide-intro">Everything a new surveyor needs before their first walk, in the order it comes up in the field. Read it through once at the start of the season, then use it to settle an argument on the bank. It works with no signal, like the rest of the app.</p>
-      <div id="guide"></div>
-    </div>
-  </details>
-
-  <details class="panel" id="selfcheck">
-    <summary><h2>Check yourself</h2><span class="sec-sub">six questions</span></summary>
-    <div class="panel-in">
-      <p class="hint">Six questions drawn at random from the field guide, with the reasoning after each one. Worth running before your first survey of the season.</p>
-      <div id="quizHolder"></div>
-    </div>
-  </details>
-
   <details class="panel" id="settings">
     <summary><h2>Settings and backup</h2><span class="sec-sub" id="bk-sub"></span></summary>
     <div class="panel-in">
@@ -219,7 +203,7 @@
           <p class="hint">Count each fish once, including any on a redd. Smaller fish are likely parr or smolts.</p>
         </div>
         <div class="field"><span class="lab">Other species seen (tap any)</span><div class="chips" data-chip="others" data-multi="1"></div>
-          <p class="hint">Coho and chum finish before the cutthroat window, but their redds stay on the bed. Steelhead overlap it.</p></div>
+          <p class="hint">Helps attribute redds.</p></div>
       </div>
 
       <div class="sec-card">
@@ -250,26 +234,19 @@
         <p class="hint" id="gpsRead">Read it off the handheld and type it in. Decimal degrees or UTM both work.</p>
       </div>
 
-      <details class="teach" id="isReddAid">
-        <summary><span class="teach-i" aria-hidden="true">?</span> Is it actually a redd?</summary>
-        <div class="teach-in" id="isReddBody"></div>
-      </details>
-
       <div class="field">
         <span class="lab">How sure are you?</span>
         <div class="chips stack" data-chip="conf"></div>
-        <p class="hint">Recorded, never used to throw a redd out. <b>Possible</b> is an honest answer and the project would rather have it than a guess dressed up as a fact.</p>
+        <p class="hint">Recorded, never used to throw a redd out.</p>
       </div>
 
       <div class="field">
         <span class="lab">Redd age</span>
         <div class="chips stack" data-chip="age"></div>
-        <div class="agehelp" id="ageHelp" hidden></div>
       </div>
 
       <div class="sec-card" id="measBox">
         <h3>Measurements</h3>
-        <div class="dgm-wrap" id="measDgm"></div>
         <div class="grid2">
           <div class="field">
             <label for="rd-len">Length</label>
@@ -288,7 +265,7 @@
       <p class="warn" id="age3Warn" hidden>Age 3 redds have full algae growth and are no longer measurable. Leave the measurements blank and just record that it's there.</p>
 
       <div class="field"><span class="lab">Adults on this redd?</span><div class="chips big2" data-chip="adults"></div>
-        <p class="hint">Expect <b>absent</b>. Fewer than 3% of 544 cutthroat redds had a fish on them across six seasons of weekly surveys, so absent is the normal result and it is real data.</p></div>
+        <p class="hint">Absent is the normal result, and it is real data.</p></div>
       <div class="sec-card" id="adultBox" hidden>
         <h3>Adults on this redd</h3>
         <div class="field"><label for="rd-n">How many</label>
@@ -318,7 +295,6 @@
 </div>
 
 <script src="xlsx.js"></script>
-<script src="learn.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -44,6 +44,7 @@ Where do Coastal Cutthroat Trout (CCT) spawn in Squamish watershed tributaries, 
   - **Adults on the redd:** Present / Absent, required on every redd. When adults are present the app also records the number, species (including *CCT/RB unresolved*) and behaviour (paired, digging, holding, single).
   - **Whose redd** — the crew's best call, made from the measurement, the timing and any fish present together, never the shape alone.
   - **Optional:** channel position, photo or video IDs, and notes.
+- **Size feedback at the point of entry.** As a length is entered, the app places it against the measured cutthroat range (19–75 cm), the steelhead overlap and salmon scale, and flags anything past about 150 cm as likely coho from the fall. Coho finish before the CCT window but their redds remain on the bed through it, so this is the attribution problem answered while the crew is standing over the redd. It is the only interpretation the app performs; redd identification is taught by the **CCT Redd Field Reference** one-pager and the survey protocol, not by the app.
 - **GPS is entered by hand.** The crew reads the point off a handheld and types it in. Decimal degrees are parsed out into latitude and longitude columns for the export; UTM and any other format are kept exactly as typed. Nothing depends on the phone having a usable fix under canopy.
 - **Flagging.** Every redd is flagged on the bank immediately upstream, with the date, the number of redds at that spot, the redd ID and the surveyor's initials written on the tape. The count on the tape is what stops a cluster being re-counted later. Only unflagged redds are recorded as new on the next visit.
 - **Spawning pairs:** two or more cutthroat on a redd, or "paired" behaviour, are highlighted and counted separately. Only 25 of 544 CCT redds (under 3%) had a fish on them in six seasons at Skookum Creek (Losee et al. 2016). Even one documented pair would be a significant local record.
@@ -72,18 +73,6 @@ The stream field takes any name typed into it. The suggestion list comes from th
 - **Other candidate creeks:** from the original July 2026 list.
 
 Anything else a crew types is remembered and suggested next time.
-
-## The app as a training tool
-
-The app is used by crew members who may be running their first redd survey, so the reasoning sits next to the decision rather than in a manual left in the truck.
-
-- **Diagrams at the point of measurement.** Scale drawings of a redd in section and in plan, with the length and width dimensions pinned to the features they are defined against, appear directly above the measurement fields. The definition and the drawing are generated from the same geometry, so they cannot drift apart.
-- **Live feedback on the measurement.** An entered length is placed on a scale against the measured cutthroat range (19–75 cm), the steelhead overlap, and salmon scale. Anything past about 150 cm is flagged as likely coho from the fall. This is the attribution problem handled at the moment of entry rather than at the desk.
-- **A decision aid before the call.** A "looks like a redd / probably not" comparison is one tap away inside the redd form, covering the three common false positives: freshet scour, a ford or animal crossing, and a test dig.
-- **A field guide** of nine short lessons: what a redd is, where to look, whether it is one, how fresh, how to measure, whose it is, why adults are almost never seen, why nil results matter, and safety. It works offline like the rest of the app.
-- **A self-check** of six questions drawn at random, each with the reasoning afterwards, intended to be run before the first survey of a season.
-
-The content is kept in `learn.js`, separate from the survey logic, so it can be revised without touching the data handling.
 
 ## Data
 

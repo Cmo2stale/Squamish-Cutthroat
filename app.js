@@ -2,7 +2,7 @@
    Method basis: Losee et al. 2016; Gallagher et al. 2007; ODFW 2026. All data stays on this device. */
 (function(){
 'use strict';
-var APP_VERSION='3.1.0';
+var APP_VERSION='3.2.0';
 var $=function(s,r){return (r||document).querySelector(s)};
 var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -46,10 +46,6 @@ var CHIPS={
 var SHORT={vis:{'1':'1 Riffles and pools visible','2':'2 Riffles only','3':'3 Not surveyable'},flow:{L:'Low',N:'Normal',H:'High'},
   trend:{F:'Falling',S:'Steady',R:'Rising'},adults:{A:'Absent',P:'Present'},fish:{A:'None seen',P:'Fish seen'},
   age:{'1':'1 Fresh','2':'2 Some algae','3':'3 Full algae'}};
-var AGE_WHAT={
-  '1':'Built since the last high water. This one dates spawning to about the week of your survey, which is the whole point of walking weekly.',
-  '2':'Older than a week or two, but the shape still reads. Measure it.',
-  '3':'Too far gone to measure. Still worth recording — it is evidence the creek was used.'};
 var AGE_FULL={'1':'Fresh, no algae growth','2':'Some algae growth, no fish present','3':'Full algae growth, no longer measurable'};
 function lab(key,v){if(SHORT[key]&&SHORT[key][v])return SHORT[key][v];var o=CHIPS[key]||[];for(var i=0;i<o.length;i++){if(o[i][0]===v)return o[i][1].split(' · ')[0]}return v||''}
 
@@ -194,12 +190,8 @@ function resultLine(s){
 function renderSurveys(){
   var list=surveys.filter(inYear).sort(function(a,b){return (a.date<b.date?1:a.date>b.date?-1:0)||((b.createdAt||0)-(a.createdAt||0))}),el=$('#surveys');
   if(!list.length){
-    el.innerHTML='<div class="firstrun">'+
-      '<p><b>No surveys '+(year==='all'?'yet':'in the '+year+' season')+'.</b></p>'+
-      '<p>New to this? Open the <b>Field guide</b> below and read it through once \u2014 what a redd looks like, where to look, how to age and measure one, and why a walk that finds nothing still matters. Then try <b>Check yourself</b>.</p>'+
-      '<p>When you are at the bottom of the reach, tap <b>Start a survey</b>.</p>'+
-      '<div class="btnrow"><button type="button" class="ghost" data-jump="howto">Open the field guide</button>'+
-      '<button type="button" class="ghost" data-jump="selfcheck">Check yourself</button></div></div>';
+    el.innerHTML='<p class="empty" style="padding-top:14px">No surveys '+(year==='all'?'yet':'in the '+year+' season')+
+      '. Tap \u201CStart a survey\u201D at the bottom of the reach. A walk that finds nothing is still a record.</p>';
     $('#moreBtn').hidden=true;return;
   }
   el.innerHTML=list.slice(0,shown).map(function(s){
@@ -282,19 +274,18 @@ function setChip(key,v){
 }
 function getChip(key){var v=chipVal[key];return Array.isArray(v)?v.slice():(v||'')}
 function applyAge(){
-  var a=getChip('age'),old=a==='3',help=$('#ageHelp');
+  var old=getChip('age')==='3';
   $('#age3Warn').hidden=!old;
   $('#measBox').classList.toggle('dim',old);
   $('#rd-len').disabled=old;$('#rd-wid').disabled=old;
   if(old){$('#rd-len').value='';$('#rd-wid').value=''}
-  if(a&&AGE_WHAT[a]){help.textContent=AGE_WHAT[a];help.hidden=false}else help.hidden=true;
   sizeRead();
 }
 function sizeRead(){
   var el=$('#sizeRead'),mark=$('#sizeBarHolder .sb-mark'),L=num($('#rd-len').value),W=num($('#rd-wid').value);
-  var read=window.CCTLearn?CCTLearn.readLength(L):null;
+  var read=readLength(L);
   if(mark){
-    if(read){mark.hidden=false;mark.style.left=CCTLearn.pct(L)+'%';mark.setAttribute('data-band',read.band);
+    if(read){mark.hidden=false;mark.style.left=barPct(L)+'%';mark.setAttribute('data-band',read.band);
       var v=mark.querySelector('.sb-val');if(v)v.textContent=L+' cm';}
     else mark.hidden=true;
   }
@@ -442,6 +433,29 @@ function startTicking(){
   },1000);
 }
 
+/* ---------- redd size scale ----------
+   Where a measured length falls against the species ranges, so a coho redd from the fall
+   gets spotted standing over it rather than back at the desk. */
+var SPAN=260; /* cm across the scale */
+var BANDS=[{id:'cct',name:'Cutthroat',from:19,to:80},{id:'rb',name:'Steelhead',from:80,to:150},{id:'salmon',name:'Coho / salmon',from:150,to:SPAN}];
+function barPct(cm){return Math.max(0,Math.min(100,cm/SPAN*100))}
+function buildSizeBar(){
+  var bands=BANDS.map(function(b){
+    return '<div class="sb-band sb-'+b.id+'" style="left:'+barPct(b.from)+'%;width:'+(barPct(b.to)-barPct(b.from))+'%"><span>'+b.name+'</span></div>';
+  }).join('');
+  var ticks=[0,50,100,150,200].map(function(c){return '<span class="sb-tick" style="left:'+barPct(c)+'%">'+c+'</span>'}).join('');
+  $('#sizeBarHolder').innerHTML='<div class="sizebar"><div class="sb-track">'+bands+'</div>'+
+    '<div class="sb-mark" hidden><span class="sb-val"></span><i></i></div>'+
+    '<div class="sb-axis">'+ticks+'<span class="sb-end">250 cm</span></div></div>';
+}
+function readLength(cm){
+  if(cm===''||cm==null||!isFinite(cm)||cm<=0)return null;
+  if(cm<19)return {band:'small',flag:false,text:'Smaller than any measured cutthroat redd. Check you measured the whole disturbance \u2014 pit and mound together \u2014 and not just the pit.'};
+  if(cm<=80)return {band:'cct',flag:false,text:'In the cutthroat range. Measured cutthroat pits ran 19 to 75 cm and averaged 48 cm long by 43 cm wide.'};
+  if(cm<=150)return {band:'rb',flag:false,text:'Bigger than a typical cutthroat redd. A large cutthroat or a steelhead \u2014 size alone will not settle it. Weigh the timing and any fish seen.'};
+  return {band:'salmon',flag:true,text:'Much larger than a cutthroat redd. Most likely coho or another salmon from the fall. Record it, mark it as theirs, and say so in the notes.'};
+}
+
 /* ---------- redds ---------- */
 function initials(s){return String(s||'').replace(/\(.*?\)/g,' ').split(/[\s\-]+/).filter(function(w){return /[A-Za-z0-9]/.test(w)}).map(function(w){return w[0]}).join('').toUpperCase().slice(0,4)||'R'}
 function suggestReddId(){
@@ -484,7 +498,6 @@ function openRedd(id){
   setChip('conf',r?r.conf:'');setChip('age',r?r.age:'');setChip('adults',r?r.adults:'');setChip('sp',r?r.sp:'CCT');setChip('beh',r?r.beh:[]);
   setChip('who',r?r.who:'');setChip('hab',r?r.hab:'');
   $('#rd-more').open=!!r&&!!(r.hab||r.photos||r.notes);
-  $('#isReddAid').open=false;
   gpsEcho();checkRanges();updatePairNote();$('#rd-msg').textContent='';
   $('#rd-title').textContent=r?'Edit redd':'Redd found';$('#rd-save').textContent=r?'Save changes':'Save redd';
   $('#rd-del').hidden=!r;resetDel($('#rd-del'),'Delete');
@@ -633,11 +646,7 @@ function restoreFile(file){
 function bind(){
   $('#startBtn').addEventListener('click',function(){openSurvey(null)});
   $('#liveOpen').addEventListener('click',function(){var id=$('#liveCard').getAttribute('data-id');if(id)openSurvey(id)});
-  $('#surveys').addEventListener('click',function(e){
-    var j=e.target.closest('[data-jump]');
-    if(j){var panel=$('#'+j.getAttribute('data-jump'));panel.open=true;panel.scrollIntoView({behavior:'smooth',block:'start'});return}
-    var b=e.target.closest('[data-open]');if(b)openSurvey(b.getAttribute('data-open'));
-  });
+  $('#surveys').addEventListener('click',function(e){var b=e.target.closest('[data-open]');if(b)openSurvey(b.getAttribute('data-open'))});
   $('#moreBtn').addEventListener('click',function(){shown+=20;renderSurveys()});
   $('#yearSel').addEventListener('change',function(e){year=e.target.value==='all'?'all':+e.target.value;shown=20;render()});
 
@@ -756,24 +765,8 @@ async function checkForUpdate(){
   else toast('You have the latest version ('+APP_VERSION+').');
 }
 
-/* ---------- the teaching layer (learn.js) ---------- */
-function buildLearning(){
-  if(!window.CCTLearn)return;
-  $('#measDgm').innerHTML=CCTLearn.anatomySvg()+CCTLearn.planSvg();
-  $('#sizeBarHolder').innerHTML=CCTLearn.sizeBarHtml(true);
-  $('#isReddBody').innerHTML=CCTLearn.compareHtml()+
-    '<p class="teach-key">Pit, mound, cleaned gravel \u2014 all three together. The usual false alarms are freshet scour, a ford or animal crossing, and a female\u2019s test dig.</p>';
-  var guide=$('#howto'),quiz=$('#selfcheck');
-  guide.addEventListener('toggle',function(){
-    if(guide.open&&!$('#guide').innerHTML)$('#guide').innerHTML=CCTLearn.guideHtml();
-  });
-  quiz.addEventListener('toggle',function(){
-    if(quiz.open&&!$('#quizHolder').innerHTML){$('#quizHolder').innerHTML=CCTLearn.quizHtml();CCTLearn.startQuiz($('#quizHolder'))}
-  });
-}
-
 /* ---------- start ---------- */
-buildChips();buildLearning();bind();updateToday();fillStreamList();render();
+buildChips();buildSizeBar();bind();updateToday();fillStreamList();render();
 if(liveSurvey())startTicking();
 registerSW();
 window.__cct={surveys:function(){return surveys},summaryRows:summaryRows,surveyRows:surveyRows,reddRows:reddRows,parseGps:parseGps,clockText:clockText};

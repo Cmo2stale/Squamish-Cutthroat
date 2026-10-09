@@ -34,19 +34,11 @@ The full written method, the creek list and the survey timing are in the **CCT S
 
 Everything saves on the phone as you go.
 
-## Learning it
-
-The app is built to teach the survey while it records it, for crews running their first season.
-
-- **Field guide** — nine short lessons with diagrams: what a redd is, where to look, whether it is one, how fresh, how to measure, whose it is, why you will almost never see the fish, why a nil result matters, and safety.
-- **Check yourself** — six questions drawn at random, with the reasoning after each.
-- **In the redd form** — scale diagrams sit directly above the measurement fields, "Is it actually a redd?" opens a looks-like/probably-not comparison, and an entered length is placed live on a scale against the cutthroat, steelhead and salmon ranges.
-
-All of it works offline. The training content lives in `learn.js`, apart from the survey logic.
-
 ## Why the measurement matters
 
 Coho finish spawning before the cutthroat window, but their redds are still on the bed through it. They are considerably larger than cutthroat redds, so the length and width are how a crew tells them apart. Cutthroat pits run roughly 20–75 cm and average about 48 × 43 cm.
+
+As a length is entered, the app places it on a scale against the cutthroat, steelhead and salmon ranges and flags anything past about 150 cm as likely coho from the fall. That is the only piece of interpretation the app does; everything else about redd identification lives in the **CCT Redd Field Reference** one-pager and the survey protocol.
 
 ## After the field day
 
@@ -61,7 +53,7 @@ Nothing is uploaded. There are no accounts and no server.
 
 ## Notes for maintainers
 
-- This is a static site with no build step: `index.html`, `styles.css`, `app.js`, `learn.js` (diagrams, field guide and self-check), `xlsx.js` (the Excel writer) and `sw.js` (the offline cache).
+- This is a static site with no build step: `index.html`, `styles.css`, `app.js`, `xlsx.js` (the Excel writer) and `sw.js` (the offline cache).
 - When you change any file, bump `VERSION` in `sw.js` and `APP_VERSION` in `app.js`. Installed copies will then update.
 - The suggested stream list is the `CREEK_GROUPS` constant at the top of `app.js`. Crews can type any other name; it's remembered for next time.
 - The clock is stored as `accum` (milliseconds banked) plus `runFrom` (the timestamp of the current run), so elapsed time is correct across reloads, backgrounding and restarts.
