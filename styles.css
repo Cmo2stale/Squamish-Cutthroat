@@ -210,3 +210,18 @@ details.idhelp ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:c
 .foot2 .ghost{min-height:52px}
 .danger-link{border:1px solid var(--slash);color:var(--slash);background:var(--surface);border-radius:8px;padding:8px 14px;min-height:44px}
 .danger-link.sure{background:var(--slash);color:var(--on-slash)}
+
+/* ---- v2 spawner survey ---- */
+.chips.stack{flex-direction:column;align-items:stretch}
+.chips.stack .chip{width:100%;text-align:left;border-radius:10px;padding:10px 14px;min-height:48px}
+.chips.stack .chip b{font-weight:700}
+.chip b{font-weight:700}
+.chips.big2{flex-wrap:nowrap}
+.chips.big2 .chip{flex:1 1 0;min-height:56px;font-weight:700;font-size:1.05rem;border-radius:12px}
+.chip.mini{min-height:38px;padding:6px 12px;font-size:14px}
+.chip small{font:500 12px var(--f-mono);opacity:.8;margin-left:4px}
+.check{padding:10px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.check small{color:var(--muted);font-size:13px}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px;max-width:62ch}
+.steps li{padding-left:4px}
+.obs .d small+small{margin-top:1px}

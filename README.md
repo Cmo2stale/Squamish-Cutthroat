@@ -1,40 +1,45 @@
-# CCT Field Survey
+# CCT Spawner Survey
 
-Offline field datasheets for Coastal Cutthroat Trout (CCT) spawning surveys in the Squamish River watershed. These are the digital versions of the **C1 Streamwalk / Spawning Survey** and **C2 Redd Characterization** sheets from the project's *CCT Field Reference & Datasheet Package*.
+An offline app for weekly Coastal Cutthroat Trout (CCT) spawning surveys in Squamish watershed tributaries. On each visit, crews count new redds, record whether adults were present or absent, re-check last week's flags, and log the visit even when nothing is found.
 
-The app is part of the HCTF capacity grant *Indigenous Capacity to Identify and Protect Cutthroat Spawning Habitat* (CAP-0000000288). It was prepared by Riverside Solutions Inc.
+It was built for the HCTF capacity grant *Indigenous Capacity to Identify and Protect Cutthroat Spawning Habitat* (CAP-0000000288), for Squamish Nation field crews to try. It was prepared by Riverside Solutions Inc.
 
 **Open the app:** https://cmo2stale.github.io/Squamish-Cutthroat/
 
+See **[METHODS.md](METHODS.md)** for the survey design and the published methods it follows: Losee et al. 2016, Gallagher et al. 2007, ODFW 2026 and Trout Unlimited 2019.
+
 ## Setting up a phone
 
-1. Open the link once on the phone while you have signal.
+1. Open the link once while you have signal.
 2. Add it to the home screen:
    - **iPhone:** in Safari, tap Share, then "Add to Home Screen".
    - **Android:** in Chrome, open the menu, then "Install app".
-3. From then on, always open it from the home screen. It works with no cell service, and GPS works without signal.
+3. From then on, open it from the home screen. It works with no cell service, and GPS works without signal.
 
-## In the field
+## On each visit
 
-- **Start a survey** at the reach. The app fills in today's date, the start time, the observers and the GPS start. Then add the stream, reach ID, survey layer and conditions.
-- Walk upstream and log as you go:
-  - **+ Fish or carcass** records species, count, size, time, GPS and photo IDs.
-  - **+ Redd (C2)** records the redd ID for the bank flag, GPS, pit and tailspill size, depth, velocity, substrate, habitat unit, confidence, adult on the redd, species attribution and its basis, and whether it falls in the Feb–May window. Typical CCT ranges are shown under each measurement and flagged when a value falls outside them. The app also warns if a redd is attributed to CCT on shape alone.
-- The **reach summary** (total CCT redds, live CCT, coho and other species noted) fills in by itself.
-- **Finish survey** sets the end time and GPS end.
-- Everything saves on the phone as you type.
+1. **Start a survey** at the bottom of the reach and pick the creek. The date, time, crew and GPS fill in by themselves.
+2. Set **visibility** (1, 2 or 3) and **flow**.
+3. **Check last week's flags:** mark each one still visible or gone, and adults present or absent.
+4. Tap **+ New redd** for each unflagged redd. Record the confidence and adults **present or absent**, then flag it on the bank with the ID shown.
+5. Count **adult cutthroat** seen in the reach (about 25 cm or longer).
+6. At the top of the reach, tap **Finish survey**. A visit with no redds is saved as a nil result.
+
+Everything saves on the phone as you go. Reaches show up under **Due for a visit** once 7 days have passed during February to May.
 
 ## After the field day
 
-- **Export:** produces an Excel workbook with three tabs (Surveys, Fish observations, Redds), or three CSV files. Every row has a *Survey key* so the tabs can be joined.
+- **Export:** choose Excel (four tabs) or CSV (four files): Season summary, Surveys, Redds and Detections.
 - **Backup:** save a backup file after each field day. Surveys live only on that phone until they are exported or backed up.
+
+Data entered in version 1 (C1/C2 datasheets) is carried over automatically, and old backups can still be restored.
 
 ## Data
 
-Nothing is uploaded. There are no accounts and no server. Data stays on the device until a crew member exports or backs it up and chooses where to send it.
+Nothing is uploaded. There are no accounts and no server.
 
 ## Notes for maintainers
 
 - This is a static site with no build step: `index.html`, `styles.css`, `app.js`, `xlsx.js` (the Excel writer) and `sw.js` (the offline cache).
-- When you change any file, bump `VERSION` in `sw.js` and `APP_VERSION` in `app.js`. Installed copies will then pick up the update.
-- Reference ranges come from the CCT Field Reference & Datasheet Package (A2, A5, B2), drawing on Losee et al. (2016).
+- When you change any file, bump `VERSION` in `sw.js` and `APP_VERSION` in `app.js`. Installed copies will then update.
+- The creek list is the `CREEKS` constant at the top of `app.js`.
