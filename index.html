@@ -77,35 +77,18 @@
   </section>
 
   <details class="panel" id="howto">
-    <summary><h2>Quick reference</h2><span class="sec-sub">in the field</span></summary>
+    <summary><h2>Field guide</h2><span class="sec-sub">learn the survey</span></summary>
     <div class="panel-in">
-      <div class="field">
-        <span class="lab">Redd age</span>
-        <div class="agekey">
-          <div><b>1</b><span>Fresh. Clean gravel, no algae growth. This redd was built since the last freshet — it dates spawning to about now.</span></div>
-          <div><b>2</b><span>Some algae growth, no fish present. Still measurable, but older than a week or two.</span></div>
-          <div><b>3</b><span>Full algae growth, no longer measurable. Record it, but don't measure it.</span></div>
-        </div>
-      </div>
-      <div class="field">
-        <span class="lab">Measuring a redd</span>
-        <p class="hint"><b>Length</b> runs from the upstream edge of the pit to the downstream end of the tailspill mound. <b>Width</b> is the widest point across the disturbed gravel. Both in centimetres.</p>
-        <p class="hint">Cutthroat pits run roughly 20–75 cm, averaging about 48 × 43 cm. Coho redds are considerably larger. Coho will be finished by the cutthroat window, but their redds are still on the bed, so the measurement is how you tell them apart.</p>
-      </div>
-      <div class="field">
-        <span class="lab">Visibility</span>
-        <p class="hint"><b>1</b> — bottom of riffles and pools visible. <b>2</b> — riffles only. <b>3</b> — can't see the bottom; not surveyable, so zero redds doesn't mean absence.</p>
-      </div>
-      <div class="field">
-        <span class="lab">The rules that matter</span>
-        <ul class="tightlist">
-          <li>Walk upstream so you aren't looking through your own silt.</li>
-          <li>Never step on a redd, or on gravel that might be one.</li>
-          <li>Write the date and the number of redds on the flagging tape.</li>
-          <li>A walk that finds nothing is still a survey. Save it.</li>
-        </ul>
-      </div>
-      <p class="hint">Full method, creek list and timing: <b>CCT Spawner &amp; Redd Survey Protocol v0.1</b>. Method basis: <a href="METHODS.md">METHODS.md</a>.</p>
+      <p class="guide-intro">Everything a new surveyor needs before their first walk, in the order it comes up in the field. Read it through once at the start of the season, then use it to settle an argument on the bank. It works with no signal, like the rest of the app.</p>
+      <div id="guide"></div>
+    </div>
+  </details>
+
+  <details class="panel" id="selfcheck">
+    <summary><h2>Check yourself</h2><span class="sec-sub">six questions</span></summary>
+    <div class="panel-in">
+      <p class="hint">Six questions drawn at random from the field guide, with the reasoning after each one. Worth running before your first survey of the season.</p>
+      <div id="quizHolder"></div>
     </div>
   </details>
 
@@ -263,17 +246,30 @@
 
       <div class="field">
         <label for="rd-gps">GPS point</label>
-        <input type="text" id="rd-gps" maxlength="60" placeholder="49.70123, -123.15456" autocomplete="off" inputmode="text">
+        <input type="text" id="rd-gps" maxlength="60" placeholder="e.g. 49.70123, -123.15456" autocomplete="off" inputmode="text">
         <p class="hint" id="gpsRead">Read it off the handheld and type it in. Decimal degrees or UTM both work.</p>
+      </div>
+
+      <details class="teach" id="isReddAid">
+        <summary><span class="teach-i" aria-hidden="true">?</span> Is it actually a redd?</summary>
+        <div class="teach-in" id="isReddBody"></div>
+      </details>
+
+      <div class="field">
+        <span class="lab">How sure are you?</span>
+        <div class="chips stack" data-chip="conf"></div>
+        <p class="hint">Recorded, never used to throw a redd out. <b>Possible</b> is an honest answer and the project would rather have it than a guess dressed up as a fact.</p>
       </div>
 
       <div class="field">
         <span class="lab">Redd age</span>
         <div class="chips stack" data-chip="age"></div>
+        <div class="agehelp" id="ageHelp" hidden></div>
       </div>
 
       <div class="sec-card" id="measBox">
         <h3>Measurements</h3>
+        <div class="dgm-wrap" id="measDgm"></div>
         <div class="grid2">
           <div class="field">
             <label for="rd-len">Length</label>
@@ -286,11 +282,13 @@
             <p class="range" data-for="rd-wid">Widest point across the disturbed gravel</p>
           </div>
         </div>
+        <div id="sizeBarHolder"></div>
         <p class="sizeread" id="sizeRead" hidden></p>
       </div>
       <p class="warn" id="age3Warn" hidden>Age 3 redds have full algae growth and are no longer measurable. Leave the measurements blank and just record that it's there.</p>
 
-      <div class="field"><span class="lab">Adults on this redd?</span><div class="chips big2" data-chip="adults"></div></div>
+      <div class="field"><span class="lab">Adults on this redd?</span><div class="chips big2" data-chip="adults"></div>
+        <p class="hint">Expect <b>absent</b>. Fewer than 3% of 544 cutthroat redds had a fish on them across six seasons of weekly surveys, so absent is the normal result and it is real data.</p></div>
       <div class="sec-card" id="adultBox" hidden>
         <h3>Adults on this redd</h3>
         <div class="field"><label for="rd-n">How many</label>
@@ -320,6 +318,7 @@
 </div>
 
 <script src="xlsx.js"></script>
+<script src="learn.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

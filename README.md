@@ -23,6 +23,7 @@ The full written method, the creek list and the survey timing are in the **CCT S
 3. Record the **water temperature** and the **visibility** (1, 2 or 3).
 4. Tap **Redd found** for each redd. Enter:
    - the **GPS point**, read off the handheld and typed in — decimal degrees or UTM,
+   - **how sure** you are it's a redd: Confirmed, Probable or Possible,
    - the **age**: 1 fresh with no algae, 2 some algae and no fish, 3 full algae and no longer measurable,
    - the **length** (upstream edge of the pit to the downstream end of the tailspill mound) and the **width**, unless it's age 3,
    - whether **adults** were on it.
@@ -32,6 +33,16 @@ The full written method, the creek list and the survey timing are in the **CCT S
 6. Write the **notes**, then **Finish survey**. A walk that finds nothing is saved as a nil result.
 
 Everything saves on the phone as you go.
+
+## Learning it
+
+The app is built to teach the survey while it records it, for crews running their first season.
+
+- **Field guide** — nine short lessons with diagrams: what a redd is, where to look, whether it is one, how fresh, how to measure, whose it is, why you will almost never see the fish, why a nil result matters, and safety.
+- **Check yourself** — six questions drawn at random, with the reasoning after each.
+- **In the redd form** — scale diagrams sit directly above the measurement fields, "Is it actually a redd?" opens a looks-like/probably-not comparison, and an entered length is placed live on a scale against the cutthroat, steelhead and salmon ranges.
+
+All of it works offline. The training content lives in `learn.js`, apart from the survey logic.
 
 ## Why the measurement matters
 
@@ -50,7 +61,7 @@ Nothing is uploaded. There are no accounts and no server.
 
 ## Notes for maintainers
 
-- This is a static site with no build step: `index.html`, `styles.css`, `app.js`, `xlsx.js` (the Excel writer) and `sw.js` (the offline cache).
+- This is a static site with no build step: `index.html`, `styles.css`, `app.js`, `learn.js` (diagrams, field guide and self-check), `xlsx.js` (the Excel writer) and `sw.js` (the offline cache).
 - When you change any file, bump `VERSION` in `sw.js` and `APP_VERSION` in `app.js`. Installed copies will then update.
 - The suggested stream list is the `CREEK_GROUPS` constant at the top of `app.js`. Crews can type any other name; it's remembered for next time.
 - The clock is stored as `accum` (milliseconds banked) plus `runFrom` (the timestamp of the current run), so elapsed time is correct across reloads, backgrounding and restarts.

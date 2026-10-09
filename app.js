@@ -2,7 +2,7 @@
    Method basis: Losee et al. 2016; Gallagher et al. 2007; ODFW 2026. All data stays on this device. */
 (function(){
 'use strict';
-var APP_VERSION='3.0.0';
+var APP_VERSION='3.1.0';
 var $=function(s,r){return (r||document).querySelector(s)};
 var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -33,6 +33,9 @@ var CHIPS={
   trend:[['F','Falling'],['S','Steady'],['R','Rising']],
   fish:[['A','None seen'],['P','Fish seen']],
   others:[['steelhead','Steelhead / rainbow'],['coho','Coho'],['chum','Chum'],['pink','Pink'],['chinook','Chinook'],['char','Bull trout / Dolly'],['lamprey','Lamprey']],
+  conf:[['Confirmed','Confirmed · Clear pit and mound, cleaned gravel, or a fish on it'],
+        ['Probable','Probable · Right shape in the right place, but something is unclear'],
+        ['Possible','Possible · Could be scour, trampling or a test dig']],
   age:[['1','1 · Fresh — clean gravel, no algae growth'],['2','2 · Some algae growth, no fish present'],['3','3 · Full algae growth, no longer measurable']],
   adults:[['A','Absent'],['P','Present']],
   sp:[['CCT','Cutthroat'],['CCT/RB','CCT/RB unresolved'],['RB','Steelhead / rainbow'],['coho','Coho'],['unknown','Unknown']],
@@ -43,6 +46,10 @@ var CHIPS={
 var SHORT={vis:{'1':'1 Riffles and pools visible','2':'2 Riffles only','3':'3 Not surveyable'},flow:{L:'Low',N:'Normal',H:'High'},
   trend:{F:'Falling',S:'Steady',R:'Rising'},adults:{A:'Absent',P:'Present'},fish:{A:'None seen',P:'Fish seen'},
   age:{'1':'1 Fresh','2':'2 Some algae','3':'3 Full algae'}};
+var AGE_WHAT={
+  '1':'Built since the last high water. This one dates spawning to about the week of your survey, which is the whole point of walking weekly.',
+  '2':'Older than a week or two, but the shape still reads. Measure it.',
+  '3':'Too far gone to measure. Still worth recording — it is evidence the creek was used.'};
 var AGE_FULL={'1':'Fresh, no algae growth','2':'Some algae growth, no fish present','3':'Full algae growth, no longer measurable'};
 function lab(key,v){if(SHORT[key]&&SHORT[key][v])return SHORT[key][v];var o=CHIPS[key]||[];for(var i=0;i<o.length;i++){if(o[i][0]===v)return o[i][1].split(' · ')[0]}return v||''}
 
@@ -88,7 +95,7 @@ function normSurvey(s){
   s.redds.forEach(function(r){
     if(!Array.isArray(r.beh))r.beh=[];
     r.n=int(r.n)||(r.adults==='P'?1:0);
-    r.len=num(r.len);r.wid=num(r.wid);r.age=r.age||'';r.gps=typeof r.gps==='string'?r.gps:'';
+    r.len=num(r.len);r.wid=num(r.wid);r.age=r.age||'';r.conf=r.conf||'';r.gps=typeof r.gps==='string'?r.gps:'';
   });
   return s;
 }
@@ -97,7 +104,7 @@ function fromV2(o){
   var redds=(o.redds||[]).map(function(r){
     return {id:r.id||newId('r'),label:r.label||'',time:r.time||'',
       gps:r.gps&&r.gps.lat!=null?(+r.gps.lat).toFixed(5)+', '+(+r.gps.lon).toFixed(5):'',
-      age:'',len:num(r.pitL),wid:num(r.pitW),adults:r.adults==='P'?'P':'A',n:int(r.n),sp:r.sp||'',beh:Array.isArray(r.beh)?r.beh:[],
+      age:'',conf:r.conf||'',len:num(r.pitL),wid:num(r.pitW),adults:r.adults==='P'?'P':'A',n:int(r.n),sp:r.sp||'',beh:Array.isArray(r.beh)?r.beh:[],
       who:r.who||'',hab:r.hab||'',photos:[r.photos,r.rphotos].filter(Boolean).join(' '),notes:r.notes||''};
   });
   return normSurvey({id:o.id||newId('s'),v:3,stream:o.creek||'',reach:o.reach||'',date:o.date||todayStr(),crew:o.obs||'',
@@ -113,7 +120,7 @@ function fromV1(o){
   var redds=(o.redds||[]).map(function(r){
     return {id:r.id||newId('r'),label:r.label||'',time:r.time||'',
       gps:r.gps&&r.gps.lat!=null?(+r.gps.lat).toFixed(5)+', '+(+r.gps.lon).toFixed(5):'',
-      age:'',len:num(r.pitL),wid:num(r.pitW),adults:r.adult==='Y'?'P':'A',n:r.adult==='Y'?1:0,
+      age:'',conf:r.confidence||'',len:num(r.pitL),wid:num(r.pitW),adults:r.adult==='Y'?'P':'A',n:r.adult==='Y'?1:0,
       sp:r.adult==='Y'?'unknown':'',beh:[],who:{CCT:'CCT',coho:'coho',steelhead:'RB'}[r.attrib]||'',hab:r.habitat||'',photos:r.photos||'',notes:r.notes||''};
   });
   return normSurvey({id:o.id||newId('s'),v:3,stream:o.stream||'',reach:o.reach||'',date:o.date||todayStr(),crew:o.observers||'',
@@ -141,6 +148,7 @@ function clockText(ms){
   return h?h+':'+pad(m)+':'+pad(sec):m+':'+pad(sec);
 }
 function ageCount(s,a){return s.redds.filter(function(r){return r.age===a}).length}
+function confCount(s,c){return s.redds.filter(function(r){return r.conf===c}).length}
 function reddsWithAdults(s){return s.redds.filter(function(r){return r.adults==='P'}).length}
 function pairSeen(s){return s.redds.some(function(r){return r.adults==='P'&&(r.sp==='CCT'||r.sp==='CCT/RB')&&((r.n||0)>=2||r.beh.indexOf('pair')>-1)})}
 function liveSurvey(){return surveys.filter(function(s){return s.running})[0]||null}
@@ -185,7 +193,15 @@ function resultLine(s){
 }
 function renderSurveys(){
   var list=surveys.filter(inYear).sort(function(a,b){return (a.date<b.date?1:a.date>b.date?-1:0)||((b.createdAt||0)-(a.createdAt||0))}),el=$('#surveys');
-  if(!list.length){el.innerHTML='<p class="empty" style="padding-top:14px">No surveys '+(year==='all'?'yet':'in the '+year+' season')+'. Tap “Start a survey” at the bottom of the reach. A walk that finds nothing is still a record.</p>';$('#moreBtn').hidden=true;return}
+  if(!list.length){
+    el.innerHTML='<div class="firstrun">'+
+      '<p><b>No surveys '+(year==='all'?'yet':'in the '+year+' season')+'.</b></p>'+
+      '<p>New to this? Open the <b>Field guide</b> below and read it through once \u2014 what a redd looks like, where to look, how to age and measure one, and why a walk that finds nothing still matters. Then try <b>Check yourself</b>.</p>'+
+      '<p>When you are at the bottom of the reach, tap <b>Start a survey</b>.</p>'+
+      '<div class="btnrow"><button type="button" class="ghost" data-jump="howto">Open the field guide</button>'+
+      '<button type="button" class="ghost" data-jump="selfcheck">Check yourself</button></div></div>';
+    $('#moreBtn').hidden=true;return;
+  }
   el.innerHTML=list.slice(0,shown).map(function(s){
     var n=s.redds.length;
     var pill=s.running?'<span class="pill live">Running</span>':pairSeen(s)?'<span class="pill hit">Pair seen</span>':n?'<span class="pill hit">'+plural(n,'redd')+'</span>':s.vis==='3'?'<span class="pill blank">Vis 3</span>':'<span class="pill blank">Nil</span>';
@@ -201,9 +217,10 @@ function seasonRows(list){
     if(!s.stream)return;
     var k=streamKey(s)+'||'+s.date.slice(0,4);
     var r=map[k]||(map[k]={stream:s.stream,reach:s.reach||'',season:s.date.slice(0,4),visits:0,good:0,first:s.date,last:s.date,
-      redds:0,a1:0,a2:0,a3:0,withAd:0,fishVisits:0,peakFish:0,pairs:0,minutes:0,timed:0,firstRedd:'',lastRedd:'',firstFresh:''});
+      redds:0,a1:0,a2:0,a3:0,cC:0,cP:0,cPo:0,withAd:0,fishVisits:0,peakFish:0,pairs:0,minutes:0,timed:0,firstRedd:'',lastRedd:'',firstFresh:''});
     r.visits++;if(s.vis&&s.vis!=='3')r.good++;r.last=s.date;
     r.redds+=s.redds.length;r.a1+=ageCount(s,'1');r.a2+=ageCount(s,'2');r.a3+=ageCount(s,'3');
+    r.cC+=confCount(s,'Confirmed');r.cP+=confCount(s,'Probable');r.cPo+=confCount(s,'Possible');
     r.withAd+=reddsWithAdults(s);
     if(s.fish==='P'){r.fishVisits++;r.peakFish=Math.max(r.peakFish,s.fishN||1)}
     if(pairSeen(s))r.pairs++;
@@ -265,23 +282,29 @@ function setChip(key,v){
 }
 function getChip(key){var v=chipVal[key];return Array.isArray(v)?v.slice():(v||'')}
 function applyAge(){
-  var a=getChip('age'),old=a==='3';
+  var a=getChip('age'),old=a==='3',help=$('#ageHelp');
   $('#age3Warn').hidden=!old;
   $('#measBox').classList.toggle('dim',old);
   $('#rd-len').disabled=old;$('#rd-wid').disabled=old;
   if(old){$('#rd-len').value='';$('#rd-wid').value=''}
+  if(a&&AGE_WHAT[a]){help.textContent=AGE_WHAT[a];help.hidden=false}else help.hidden=true;
   sizeRead();
 }
 function sizeRead(){
-  var el=$('#sizeRead'),L=num($('#rd-len').value),W=num($('#rd-wid').value);
-  if(L===''&&W===''){el.hidden=true;return}
-  var msg;
-  if(L!==''&&L>0&&L<=90)msg='In the cutthroat range. CCT pits average about 48 cm long by 43 cm wide.';
-  else if(L!==''&&L>90&&L<=150)msg='Larger than a typical cutthroat redd. Could be a big cutthroat or a steelhead — weigh the timing and any fish present.';
-  else if(L!==''&&L>150)msg='Much larger than a cutthroat redd. Likely coho or another salmon from the fall. Record it, and say so in the notes.';
-  else msg='Width noted. Length is the more useful measurement if you can get it.';
-  el.textContent=msg;el.hidden=false;
-  el.className='sizeread'+(L!==''&&L>150?' flag':'');
+  var el=$('#sizeRead'),mark=$('#sizeBarHolder .sb-mark'),L=num($('#rd-len').value),W=num($('#rd-wid').value);
+  var read=window.CCTLearn?CCTLearn.readLength(L):null;
+  if(mark){
+    if(read){mark.hidden=false;mark.style.left=CCTLearn.pct(L)+'%';mark.setAttribute('data-band',read.band);
+      var v=mark.querySelector('.sb-val');if(v)v.textContent=L+' cm';}
+    else mark.hidden=true;
+  }
+  if(!read){
+    if(W!==''&&W>0){el.textContent='Width noted. Length is the measurement that separates the species, so get it if you safely can.';el.className='sizeread';el.hidden=false}
+    else el.hidden=true;
+    return;
+  }
+  el.textContent=read.text;el.hidden=false;
+  el.className='sizeread'+(read.flag?' flag':read.band==='cct'?' good':'');
 }
 function updatePairNote(){
   var n=int($('#rd-n').value),sp=getChip('sp'),b=getChip('beh');
@@ -434,8 +457,9 @@ function renderReddList(){
     var size=r.len!==''||r.wid!==''?(r.len!==''?r.len:'?')+' × '+(r.wid!==''?r.wid:'?')+' cm':(r.age==='3'?'not measurable':'not measured');
     var ad=r.adults==='P'?(r.n||1)+' '+(r.sp?lab('sp',r.sp):'adult')+(r.beh.indexOf('pair')>-1?', paired':''):'no adults';
     var tag=r.age?'<span class="rtag age-'+esc(r.age)+'">Age '+esc(r.age)+'</span>':'<span class="rtag">Redd</span>';
+    var line1=[r.conf||'',size,ad].filter(Boolean).join(' · ');
     return '<button type="button" class="obs" data-redd="'+esc(r.id)+'"><span class="t">'+esc(r.time||'')+'</span><span class="d">'+esc(r.label||'Redd')+
-      '<small>'+esc(size+' · '+ad)+'</small>'+(r.gps?'<small>'+esc(r.gps)+'</small>':'<small class="miss">no GPS point</small>')+'</span>'+tag+'</button>';
+      '<small>'+esc(line1)+'</small>'+(r.gps?'<small>'+esc(r.gps)+'</small>':'<small class="miss">no GPS point</small>')+'</span>'+tag+'</button>';
   }).join('');
 }
 function renderSummary(){
@@ -443,6 +467,7 @@ function renderSummary(){
   var n=cur.redds.length,d=durMin(cur);
   $('#svSummary').innerHTML='<div><b>'+n+'</b><span>Redds</span></div>'+
     '<div><b>'+ageCount(cur,'1')+' / '+ageCount(cur,'2')+' / '+ageCount(cur,'3')+'</b><span>Age 1 / 2 / 3</span></div>'+
+    '<div><b>'+confCount(cur,'Confirmed')+' / '+confCount(cur,'Probable')+' / '+confCount(cur,'Possible')+'</b><span>Conf / Prob / Poss</span></div>'+
     '<div><b>'+(d===''?'—':d)+'</b><span>Minutes surveyed</span></div>'+
     '<div><b>'+(cur.fish==='P'?(cur.fishN||1):cur.fish==='A'?'0':'—')+'</b><span>Cutthroat seen</span></div>'+
     '<div class="wide"><span>Result</span><b>'+esc(resultLine(cur))+(pairSeen(cur)?' · spawning pair recorded':'')+'</b></div>';
@@ -456,9 +481,10 @@ function openRedd(id){
   $('#rd-len').value=r&&r.len!==''?r.len:'';$('#rd-wid').value=r&&r.wid!==''?r.wid:'';
   $('#rd-n').value=r&&r.n?r.n:1;
   if(!r){$('#rd-id').value=suggestReddId();$('#rd-time').value=nowHM()}
-  setChip('age',r?r.age:'');setChip('adults',r?r.adults:'');setChip('sp',r?r.sp:'CCT');setChip('beh',r?r.beh:[]);
+  setChip('conf',r?r.conf:'');setChip('age',r?r.age:'');setChip('adults',r?r.adults:'');setChip('sp',r?r.sp:'CCT');setChip('beh',r?r.beh:[]);
   setChip('who',r?r.who:'');setChip('hab',r?r.hab:'');
   $('#rd-more').open=!!r&&!!(r.hab||r.photos||r.notes);
+  $('#isReddAid').open=false;
   gpsEcho();checkRanges();updatePairNote();$('#rd-msg').textContent='';
   $('#rd-title').textContent=r?'Edit redd':'Redd found';$('#rd-save').textContent=r?'Save changes':'Save redd';
   $('#rd-del').hidden=!r;resetDel($('#rd-del'),'Delete');
@@ -481,6 +507,7 @@ function checkRanges(){
 }
 function saveRedd(e){
   e.preventDefault();
+  if(!getChip('conf')){$('#rd-msg').textContent='How sure are you it is a redd? Confirmed, Probable or Possible.';return}
   if(!getChip('age')){$('#rd-msg').textContent='Pick the redd age: 1, 2 or 3.';return}
   if(!getChip('adults')){$('#rd-msg').textContent='Were adults on the redd? Pick present or absent.';return}
   if(!$('#rd-id').value.trim()){$('#rd-msg').textContent='Give the redd an ID. It goes on the flagging tape.';return}
@@ -488,7 +515,7 @@ function saveRedd(e){
   Object.keys(RD_TEXT).forEach(function(k){r[k]=$('#'+RD_TEXT[k]).value.trim()});
   r.len=getChip('age')==='3'?'':num($('#rd-len').value);
   r.wid=getChip('age')==='3'?'':num($('#rd-wid').value);
-  r.age=getChip('age');r.adults=getChip('adults');r.who=getChip('who');r.hab=getChip('hab');
+  r.age=getChip('age');r.conf=getChip('conf');r.adults=getChip('adults');r.who=getChip('who');r.hab=getChip('hab');
   if(r.adults==='P'){r.n=Math.max(1,int($('#rd-n').value));r.sp=getChip('sp');r.beh=getChip('beh')}
   else{r.n=0;r.sp='';r.beh=[]}
   if(!curRedd)cur.redds.push(r);
@@ -517,29 +544,29 @@ function exportList(){return surveys.filter(inYear).filter(function(s){return s.
 function visitNumbers(list){var c={},out={};list.forEach(function(s){var k=streamKey(s)+'||'+s.date.slice(0,4);c[k]=(c[k]||0)+1;out[s.id]=c[k]});return out}
 function summaryRows(list){
   var rows=[['Stream','Reach','Season','Visits','Visits with visibility 1–2','First visit','Last visit','Total survey minutes','Mean minutes per visit',
-    'Redds found','Age 1 (fresh)','Age 2','Age 3','Redds with adults present','Visits with cutthroat seen','Peak cutthroat (one visit)','Spawning pairs recorded',
+    'Redds found','Age 1 (fresh)','Age 2','Age 3','Confirmed','Probable','Possible','Redds with adults present','Visits with cutthroat seen','Peak cutthroat (one visit)','Spawning pairs recorded',
     'First redd','First fresh (age 1) redd','Last redd']];
   seasonRows(list).forEach(function(r){rows.push([r.stream,r.reach,+r.season,r.visits,r.good,r.first,r.last,r.minutes||'',r.meanMin,
-    r.redds,r.a1,r.a2,r.a3,r.withAd,r.fishVisits,r.peakFish,r.pairs,r.firstRedd,r.firstFresh,r.lastRedd])});
+    r.redds,r.a1,r.a2,r.a3,r.cC,r.cP,r.cPo,r.withAd,r.fishVisits,r.peakFish,r.pairs,r.firstRedd,r.firstFresh,r.lastRedd])});
   return rows;
 }
 function surveyRows(list){
   var vn=visitNumbers(list),rows=[['Stream','Reach','Date','Visit # (season)','Crew','Start time','End time','Survey minutes','Water temp (°C)',
-    'Visibility','Flow','Flow trend','Redds found','Age 1 (fresh)','Age 2','Age 3','Redds with adults','Cutthroat seen (1/0)','Cutthroat counted',
+    'Visibility','Flow','Flow trend','Redds found','Age 1 (fresh)','Age 2','Age 3','Confirmed','Probable','Possible','Redds with adults','Cutthroat seen (1/0)','Cutthroat counted',
     'Spawning pair','Other species seen','Surveyable (1/0)','Notes','Survey ID']];
   list.forEach(function(s){
     rows.push([s.stream,s.reach,s.date,vn[s.id],s.crew,s.start,s.end,durMin(s),s.wt,
       lab('vis',s.vis),lab('flow',s.flow),lab('trend',s.trend),s.redds.length,ageCount(s,'1'),ageCount(s,'2'),ageCount(s,'3'),
-      reddsWithAdults(s),s.fish==='P'?1:s.fish==='A'?0:'',s.fish==='P'?(s.fishN||1):s.fish==='A'?0:'',
+      confCount(s,'Confirmed'),confCount(s,'Probable'),confCount(s,'Possible'),reddsWithAdults(s),s.fish==='P'?1:s.fish==='A'?0:'',s.fish==='P'?(s.fishN||1):s.fish==='A'?0:'',
       pairSeen(s)?'Yes':'No',s.others.map(function(o){return lab('others',o)}).join('; '),s.vis?(s.vis==='3'?0:1):'',s.notes,s.id]);
   });
   return rows;
 }
 function reddRows(list){
-  var rows=[['Redd ID','Stream','Reach','Date','Time','GPS as entered','Latitude','Longitude','Age','Age meaning',
+  var rows=[['Redd ID','Stream','Reach','Date','Time','GPS as entered','Latitude','Longitude','Confidence','Age','Age meaning',
     'Length (cm)','Width (cm)','Adults','Adults (#)','Adult species','Behaviour','Whose redd (best call)','Channel position','Photo/video IDs','Notes','Survey ID']];
   list.forEach(function(s){s.redds.forEach(function(r){
-    rows.push([r.label,s.stream,s.reach,s.date,r.time,r.gps,gpsLat(r.gps),gpsLon(r.gps),r.age?+r.age:'',AGE_FULL[r.age]||'',
+    rows.push([r.label,s.stream,s.reach,s.date,r.time,r.gps,gpsLat(r.gps),gpsLon(r.gps),r.conf,r.age?+r.age:'',AGE_FULL[r.age]||'',
       r.len,r.wid,lab('adults',r.adults),r.adults==='P'?(r.n||1):0,r.adults==='P'?lab('sp',r.sp):'',
       r.beh.map(function(b){return lab('beh',b)}).join('; '),lab('who',r.who),lab('hab',r.hab),r.photos,r.notes,s.id]);
   })});
@@ -606,7 +633,11 @@ function restoreFile(file){
 function bind(){
   $('#startBtn').addEventListener('click',function(){openSurvey(null)});
   $('#liveOpen').addEventListener('click',function(){var id=$('#liveCard').getAttribute('data-id');if(id)openSurvey(id)});
-  $('#surveys').addEventListener('click',function(e){var b=e.target.closest('[data-open]');if(b)openSurvey(b.getAttribute('data-open'))});
+  $('#surveys').addEventListener('click',function(e){
+    var j=e.target.closest('[data-jump]');
+    if(j){var panel=$('#'+j.getAttribute('data-jump'));panel.open=true;panel.scrollIntoView({behavior:'smooth',block:'start'});return}
+    var b=e.target.closest('[data-open]');if(b)openSurvey(b.getAttribute('data-open'));
+  });
   $('#moreBtn').addEventListener('click',function(){shown+=20;renderSurveys()});
   $('#yearSel').addEventListener('change',function(e){year=e.target.value==='all'?'all':+e.target.value;shown=20;render()});
 
@@ -725,8 +756,24 @@ async function checkForUpdate(){
   else toast('You have the latest version ('+APP_VERSION+').');
 }
 
+/* ---------- the teaching layer (learn.js) ---------- */
+function buildLearning(){
+  if(!window.CCTLearn)return;
+  $('#measDgm').innerHTML=CCTLearn.anatomySvg()+CCTLearn.planSvg();
+  $('#sizeBarHolder').innerHTML=CCTLearn.sizeBarHtml(true);
+  $('#isReddBody').innerHTML=CCTLearn.compareHtml()+
+    '<p class="teach-key">Pit, mound, cleaned gravel \u2014 all three together. The usual false alarms are freshet scour, a ford or animal crossing, and a female\u2019s test dig.</p>';
+  var guide=$('#howto'),quiz=$('#selfcheck');
+  guide.addEventListener('toggle',function(){
+    if(guide.open&&!$('#guide').innerHTML)$('#guide').innerHTML=CCTLearn.guideHtml();
+  });
+  quiz.addEventListener('toggle',function(){
+    if(quiz.open&&!$('#quizHolder').innerHTML){$('#quizHolder').innerHTML=CCTLearn.quizHtml();CCTLearn.startQuiz($('#quizHolder'))}
+  });
+}
+
 /* ---------- start ---------- */
-buildChips();bind();updateToday();fillStreamList();render();
+buildChips();buildLearning();bind();updateToday();fillStreamList();render();
 if(liveSurvey())startTicking();
 registerSW();
 window.__cct={surveys:function(){return surveys},summaryRows:summaryRows,surveyRows:surveyRows,reddRows:reddRows,parseGps:parseGps,clockText:clockText};

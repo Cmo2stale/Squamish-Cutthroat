@@ -35,6 +35,7 @@ Where do Coastal Cutthroat Trout (CCT) spawn in Squamish watershed tributaries, 
 ## Redds
 
 - **Every redd found gets a record.** Each one takes an ID for the bank flag (`stream initials-MMDD-number`, e.g. `LSC-0310-01`), a time, a GPS point and:
+  - **Confidence: Confirmed / Probable / Possible.** Recorded on every redd and carried through to the exports, never used to filter one out. A *Possible* redd is reported as a Possible redd, not discarded. Over-calling is the standard beginner error, and females also dig test pits that hold no eggs, so the scale exists to let a surveyor be honest rather than decisive.
   - **Age, on a 1 to 3 scale.** This is the field judgement of how fresh the redd is, and it is what dates spawning:
     - **1 — fresh.** Clean, bright gravel with no algae growth. Built since the last freshet, so it dates spawning to about the week of the survey.
     - **2 — some algae growth, no fish present.** Older than a week or two, but still measurable.
@@ -58,8 +59,8 @@ That is the detection-history layout used for site-occupancy analysis (MacKenzie
 | Table | What's in it |
 |---|---|
 | Season summary | One row per stream, reach and season: visits, visits with good visibility, total and mean survey minutes, redds by age class, redds with adults, visits with fish, peak count, spawning pairs, and the dates of the first redd, first fresh redd and last redd |
-| Surveys | One row per visit: crew, start and end time, survey minutes, water temperature, visibility, flow, redds by age, fish seen as 1/0, surveyable as 1/0, and notes |
-| Redds | One row per redd: GPS as entered plus parsed latitude and longitude, age and what the age means, length and width, adults, species, whose redd, and photo references |
+| Surveys | One row per visit: crew, start and end time, survey minutes, water temperature, visibility, flow, redds by age and by confidence, fish seen as 1/0, surveyable as 1/0, and notes |
+| Redds | One row per redd: GPS as entered plus parsed latitude and longitude, confidence, age and what the age means, length and width, adults, species, whose redd, and photo references |
 
 Excel puts these on three tabs. CSV produces three files. Coordinates are whatever the crew's handheld was set to; decimal degrees are additionally parsed into latitude and longitude columns.
 
@@ -71,6 +72,18 @@ The stream field takes any name typed into it. The suggestion list comes from th
 - **Other candidate creeks:** from the original July 2026 list.
 
 Anything else a crew types is remembered and suggested next time.
+
+## The app as a training tool
+
+The app is used by crew members who may be running their first redd survey, so the reasoning sits next to the decision rather than in a manual left in the truck.
+
+- **Diagrams at the point of measurement.** Scale drawings of a redd in section and in plan, with the length and width dimensions pinned to the features they are defined against, appear directly above the measurement fields. The definition and the drawing are generated from the same geometry, so they cannot drift apart.
+- **Live feedback on the measurement.** An entered length is placed on a scale against the measured cutthroat range (19–75 cm), the steelhead overlap, and salmon scale. Anything past about 150 cm is flagged as likely coho from the fall. This is the attribution problem handled at the moment of entry rather than at the desk.
+- **A decision aid before the call.** A "looks like a redd / probably not" comparison is one tap away inside the redd form, covering the three common false positives: freshet scour, a ford or animal crossing, and a test dig.
+- **A field guide** of nine short lessons: what a redd is, where to look, whether it is one, how fresh, how to measure, whose it is, why adults are almost never seen, why nil results matter, and safety. It works offline like the rest of the app.
+- **A self-check** of six questions drawn at random, each with the reasoning afterwards, intended to be run before the first survey of a season.
+
+The content is kept in `learn.js`, separate from the survey logic, so it can be revised without touching the data handling.
 
 ## Data
 
