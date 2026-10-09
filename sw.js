@@ -1,5 +1,5 @@
-/* Offline cache for CCT Spawner Survey. Bump VERSION whenever any app file changes. */
-var VERSION='cct-v2.0.0';
+/* Offline cache for CCT Stream Survey. Bump VERSION whenever any app file changes. */
+var VERSION='cct-v3.0.0';
 var FONT_CACHE='cct-fonts';
 var SHELL=['./','index.html','styles.css','app.js','xlsx.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png','icons/icon-maskable-512.png'];
 

@@ -1,7 +1,7 @@
 {
-  "name": "CCT Spawner Survey",
+  "name": "CCT Stream Survey",
   "short_name": "CCT Survey",
-  "description": "Offline weekly redd and spawning-adult survey for Coastal Cutthroat Trout in Squamish watershed tributaries.",
+  "description": "Offline stream survey for Coastal Cutthroat Trout redds and spawning adults in the Squamish River watershed.",
   "id": "./",
   "start_url": "./",
   "scope": "./",

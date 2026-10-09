@@ -1,4 +1,4 @@
-# CCT Spawner Survey: methods basis
+# CCT Stream Survey: methods basis
 
 This note explains what the app records and why, and which published methods each part follows. It is written for project staff, Squamish Nation fisheries staff and reviewers.
 
@@ -11,14 +11,16 @@ Where do Coastal Cutthroat Trout (CCT) spawn in Squamish watershed tributaries, 
 | What | How | Basis |
 |---|---|---|
 | **Unit** | One visit to one reach of one creek on one day. Use the same reaches all season (index reaches). | Losee et al. 2016; Gallagher et al. 2007 |
-| **Revisit interval** | About every 7 days, February to May. The app flags a reach as "due" after 7 days. | CCT redd life averaged 13.4 d and none lasted past 14–20 d (Losee et al. 2016). The protocol is to resurvey within less than the redd life, and in under 14 days (Gallagher et al. 2007; ODFW 2026). |
+| **Revisit interval** | About every 7 days, February to May. | CCT redd life averaged 13.4 d and none lasted past 14–20 d (Losee et al. 2016). The protocol is to resurvey within less than the redd life, and in under 14 days (Gallagher et al. 2007; ODFW 2026). |
 | **Season** | February to May. Expect timing to shift between years. | Skookum Creek redds ran Feb 2 to May 27, and the 50% date varied from Feb 13 to Apr 20 (Losee et al. 2016). |
 | **When to go** | As flows drop after freshets. | Spawn timing appears flow-driven: redd counts peak as flows fall and spawning pauses during freshets (WDFW work reported by Native Fish Society 2017). |
 | **Crew** | The same trained surveyors on the same creeks each season. | Redd counts vary with surveyor experience (Dunham et al. 2001, as cited in Losee et al. 2016). |
+| **Effort** | A start/stop clock records the time actually spent walking the reach, in minutes. The clock survives the phone locking, the app closing and a restart. | Counts are only comparable alongside the effort that produced them (Gallagher et al. 2007). |
 
 ## What's recorded on each visit
 
-- **Creek** from the project list, plus reach, date, surveyors, start and end time, and GPS start and end. Start and end times give effort in minutes.
+- **Stream name**, typed in or picked from the project list, plus an optional reach name, the date, and the crew initials.
+- **Survey time** from the clock: start, end and total minutes walked. The minutes are the effort figure every count is reported against.
 - **Visibility** uses ODFW codes:
   - **1:** bottom of riffles and pools visible.
   - **2:** riffles only.
@@ -26,46 +28,49 @@ Where do Coastal Cutthroat Trout (CCT) spawn in Squamish watershed tributaries, 
 
   Visibility-3 visits are kept but marked "not surveyable". They are not treated as a "nothing found" result.
 - **Flow** (Low / Normal / High) and **flow trend** (Falling / Steady / Rising). Water temperature is optional.
-- **Adult cutthroat seen**: live fish of about 25 cm or more. Smaller fish are likely parr or smolts (Losee et al. 2016 counted only fish over 25 cm TL). The app keeps this count at least as high as the cutthroat recorded on redds.
-- **Cutthroat carcasses**, and **other spawners seen** (steelhead/rainbow, coho, chum, pink, chinook, char, lamprey). These help attribute redds: steelhead overlap the CCT window, while coho and chum generally finish earlier.
+- **Fish seen or not seen**, as a presence/absence answer that must be given before a survey can be finished — "none seen" is a recorded result, not a blank. When fish were seen, the count is live adults of about 25 cm or more; smaller fish are likely parr or smolts (Losee et al. 2016 counted only fish over 25 cm TL). Recording a cutthroat on a redd sets the reach answer to present automatically, so the two cannot disagree.
+- **Other species seen** (steelhead/rainbow, coho, chum, pink, chinook, char, lamprey). These help attribute redds: steelhead overlap the CCT window, while coho and chum finish earlier but leave their redds on the bed.
+- **Notes** on the survey: other observations, access, barriers, beaver dams, channel change.
 
 ## Redds
 
-- **New redds:** any redd without a flag. Each one gets an ID for the bank flag (`creek initials-MMDD-number`, e.g. `LSC-0310-01`), GPS, time, and:
-  - **Confidence:** Confirmed / Probable / Possible. This matches the project's field package and ODFW's 1/2/3 Confident/Probable/Uncertain. Confidence is recorded, not used as a filter.
-  - **Adults on the redd:** Present / Absent. This is required on every redd. When adults are present, the app also records the number, species (including *CCT/RB unresolved*), behaviour (paired, digging, holding, single) and photo or video IDs.
-  - **Optional:** pit length and width, the most reliable CCT measures (mostly 20–75 cm, Losee et al. 2016), plus channel position, best call on species, redd photo IDs and notes.
-- **Re-checks:** flags from the last 21 days on the same reach appear on the next visit. The crew marks each **Still visible** or **Gone**, and adults present or absent. This is a simplified version of the Gallagher et al. (2007) redd-age codes. It prevents double counting and gives each redd a measured visible life. The app warns before finishing a visit with unchecked flags.
+- **Every redd found gets a record.** Each one takes an ID for the bank flag (`stream initials-MMDD-number`, e.g. `LSC-0310-01`), a time, a GPS point and:
+  - **Age, on a 1 to 3 scale.** This is the field judgement of how fresh the redd is, and it is what dates spawning:
+    - **1 — fresh.** Clean, bright gravel with no algae growth. Built since the last freshet, so it dates spawning to about the week of the survey.
+    - **2 — some algae growth, no fish present.** Older than a week or two, but still measurable.
+    - **3 — full algae growth, no longer measurable.** Recorded as present; the app locks the measurement fields so nothing spurious is entered.
+  - **Length and width, in centimetres.** Length runs from the upstream edge of the pit to the downstream end of the tailspill mound; width is the widest point across the disturbed gravel. These are the measurements that separate species. Coho finish spawning before the CCT window but their redds remain on the bed throughout it, and they are considerably larger. CCT pits run roughly 20–75 cm and average about 48 cm long by 43 cm wide (Losee et al. 2016). The app reads the entered length back against those ranges and flags anything clearly salmon-scale.
+  - **Adults on the redd:** Present / Absent, required on every redd. When adults are present the app also records the number, species (including *CCT/RB unresolved*) and behaviour (paired, digging, holding, single).
+  - **Whose redd** — the crew's best call, made from the measurement, the timing and any fish present together, never the shape alone.
+  - **Optional:** channel position, photo or video IDs, and notes.
+- **GPS is entered by hand.** The crew reads the point off a handheld and types it in. Decimal degrees are parsed out into latitude and longitude columns for the export; UTM and any other format are kept exactly as typed. Nothing depends on the phone having a usable fix under canopy.
+- **Flagging.** Every redd is flagged on the bank immediately upstream, with the date, the number of redds at that spot, the redd ID and the surveyor's initials written on the tape. The count on the tape is what stops a cluster being re-counted later. Only unflagged redds are recorded as new on the next visit.
 - **Spawning pairs:** two or more cutthroat on a redd, or "paired" behaviour, are highlighted and counted separately. Only 25 of 544 CCT redds (under 3%) had a fish on them in six seasons at Skookum Creek (Losee et al. 2016). Even one documented pair would be a significant local record.
 
 ## Nil results and detection
 
-Every visit is kept, including ones where nothing was found. For a species that is hard to detect, repeated visits are what separate "not there" from "there but missed". The **Detections** export has one row per visit:
-- **Surveyable:** 1 or 0.
-- **Redds detected:** 1 or 0.
-- **Adults detected:** 1 or 0.
+Every visit is kept, including ones where nothing was found. For a species that is hard to detect, repeated visits are what separate "not there" from "there but missed". The **Surveys** export carries, for every visit, a surveyable flag (1 unless visibility was 3), the redd count, and whether cutthroat were seen as 1 or 0.
 
-That is the detection-history layout used for site-occupancy analysis (MacKenzie et al. 2002). It lets the project estimate how often adults or redds are missed, as well as where they occur.
+That is the detection-history layout used for site-occupancy analysis (MacKenzie et al. 2002). It lets the project estimate how often fish or redds are missed, as well as where they occur. The survey minutes on each row are what make a zero from a thorough walk distinguishable from a zero from a quick one.
 
 ## Exports
 
 | Table | What's in it |
 |---|---|
-| Season summary | One row per creek, reach and season: visits, visits with good visibility, new redds by confidence, redds with adults, % of redds with adults, peak adult count, visits with adults, spawning pairs, first and last redd dates |
-| Surveys | One row per visit, with all conditions, counts and effort |
-| Redds | One row per redd: location, confidence, adults when found and on any later visit, last date seen visible, date gone, days visible, measurements |
-| Detections | One row per visit, with the 1/0 detection history |
+| Season summary | One row per stream, reach and season: visits, visits with good visibility, total and mean survey minutes, redds by age class, redds with adults, visits with fish, peak count, spawning pairs, and the dates of the first redd, first fresh redd and last redd |
+| Surveys | One row per visit: crew, start and end time, survey minutes, water temperature, visibility, flow, redds by age, fish seen as 1/0, surveyable as 1/0, and notes |
+| Redds | One row per redd: GPS as entered plus parsed latitude and longitude, age and what the age means, length and width, adults, species, whose redd, and photo references |
 
-Excel puts these on four tabs. CSV produces four files. Coordinates are decimal degrees (WGS84, the phone's GPS).
+Excel puts these on three tabs. CSV produces three files. Coordinates are whatever the crew's handheld was set to; decimal degrees are additionally parsed into latitude and longitude columns.
 
 ## Creek list
 
-The built-in list comes from the project documents:
+The stream field takes any name typed into it. The suggestion list comes from the project documents:
 - **Clear-water indicator creeks:** from the Field Survey & Redd ID Training Guide.
 - **Priority creeks:** from the August 2026 working list.
 - **Other candidate creeks:** from the original July 2026 list.
 
-Crews can add other creeks in the field.
+Anything else a crew types is remembered and suggested next time.
 
 ## Data
 

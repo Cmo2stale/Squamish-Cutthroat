@@ -225,3 +225,56 @@ details.idhelp ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:c
 .steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px;max-width:62ch}
 .steps li{padding-left:4px}
 .obs .d small+small{margin-top:1px}
+
+/* ================= v3 stream survey ================= */
+
+/* --- running-survey banner on the home screen --- */
+.live-card{border:1px solid var(--river);border-left:6px solid var(--river);border-radius:12px;background:var(--surface);padding:16px 16px 18px;display:flex;flex-direction:column;gap:6px}
+.live-top{display:flex;align-items:center;gap:9px}
+.live-top h2{font-size:1rem}
+.live-dot{width:10px;height:10px;border-radius:50%;background:var(--slash);flex:none}
+@media (prefers-reduced-motion:no-preference){.live-dot{animation:blip 1.6s ease-in-out infinite}@keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}}
+.live-clock{font:500 2.6rem/1 var(--f-mono);font-variant-numeric:tabular-nums;color:var(--river);letter-spacing:-.02em}
+.live-where{margin:0 0 8px;font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.pill.live{background:var(--river);color:var(--on-river)}
+
+/* --- the clock inside the survey --- */
+.timer-card{position:relative;overflow:hidden}
+.timer-card.running{border-color:var(--river);box-shadow:inset 3px 0 0 var(--river)}
+.clock{font:500 clamp(2.8rem,15vw,4.2rem)/1 var(--f-mono);font-variant-numeric:tabular-nums;letter-spacing:-.03em;text-align:center;color:var(--ink);padding:4px 0 0}
+.timer-card.running .clock{color:var(--river)}
+.clock-sub{margin:0;text-align:center;font-size:13.5px;color:var(--muted);min-height:20px}
+.clock-btns{display:flex;gap:10px}
+.big-btn{flex:1 1 0;border:0;border-radius:12px;min-height:60px;font-weight:800;font-size:1.1rem;letter-spacing:.02em;text-transform:uppercase;font-stretch:85%}
+.big-btn.go{background:var(--river);color:var(--on-river)}
+.big-btn.pause{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 2px var(--line)}
+.big-btn.stop{background:var(--slash);color:var(--on-slash)}
+.times-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+
+/* --- the redd trigger button --- */
+.trigger-btn{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:2px dashed var(--river);background:transparent;border-radius:12px;padding:14px 16px;min-height:66px}
+.trigger-btn:active{background:var(--soft)}
+.tb-plus{display:flex;align-items:center;justify-content:center;flex:none;width:38px;height:38px;border-radius:50%;background:var(--river);color:var(--on-river);font:500 1.6rem/1 var(--f-mono);padding-bottom:3px}
+.tb-txt{display:flex;flex-direction:column;min-width:0}
+.tb-txt b{font-size:1.05rem;font-weight:800}
+.tb-txt small{color:var(--muted);font-size:13px}
+
+/* --- redd measurement feedback --- */
+.sizeread{margin:0;padding:10px 12px;background:var(--soft);border-radius:8px;font-size:13.5px;color:var(--ink)}
+.sizeread.flag{background:var(--warn-bg);color:var(--warn-ink)}
+.sec-card.dim .field{opacity:.45}
+.hint.ok{color:var(--ok)}
+.opt{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:11.5px;margin-left:4px}
+
+/* --- redd age tags --- */
+.rtag.age-1{background:var(--slash);color:var(--on-slash)}
+.rtag.age-2{background:var(--soft);color:var(--river);box-shadow:inset 0 0 0 1px var(--river)}
+.rtag.age-3{background:var(--soft);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.obs .d small.miss{color:var(--muted);opacity:.65}
+
+/* --- quick reference panel --- */
+.agekey{display:flex;flex-direction:column;gap:10px}
+.agekey>div{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start}
+.agekey b{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--river);color:var(--on-river);font:500 1.15rem var(--f-mono)}
+.agekey span{font-size:14px;padding-top:7px}
+.tightlist{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:14px;max-width:60ch}

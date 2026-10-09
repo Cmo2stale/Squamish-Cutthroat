@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CCT Spawner Survey</title>
-<meta name="description" content="Offline weekly redd and spawning-adult survey for Coastal Cutthroat Trout in Squamish watershed tributaries.">
+<title>CCT Stream Survey</title>
+<meta name="description" content="Offline stream survey for Coastal Cutthroat Trout redds and spawning adults in the Squamish River watershed.">
 <meta name="theme-color" content="#eff0ea" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0e191b" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="CCT Survey">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -22,16 +23,24 @@
 <div class="app" id="app">
   <header>
     <div class="tag"><span id="today"></span> · Coastal Cutthroat Trout</div>
-    <h1>CCT Spawner Survey</h1>
-    <p class="lede">A weekly walk of each creek in the spawning window. Count new redds, note whether adults are on them, and record every visit, even when nothing is found. Works with no signal.</p>
+    <h1>CCT Stream Survey</h1>
+    <p class="lede">Walk a stream, run the clock, and record what you find. Redds get a measurement and an age. Works with no signal.</p>
     <span class="slash" aria-hidden="true"></span>
   </header>
 
   <div id="notice" class="notice" hidden></div>
 
-  <section aria-labelledby="due-h" id="dueSec" hidden>
-    <div class="sec-head"><h2 id="due-h">Due for a visit</h2><span class="sec-sub">7+ days since last walk</span></div>
-    <div class="chips" id="dueList"></div>
+  <!-- live survey banner -->
+  <section id="liveSec" hidden aria-labelledby="live-h">
+    <div class="live-card" id="liveCard">
+      <div class="live-top">
+        <span class="live-dot" aria-hidden="true"></span>
+        <h2 id="live-h">Survey running</h2>
+      </div>
+      <div class="live-clock" id="liveClock">0:00</div>
+      <p class="live-where" id="liveWhere"></p>
+      <button type="button" class="primary" id="liveOpen">Open the survey</button>
+    </div>
   </section>
 
   <section aria-labelledby="sv-h">
@@ -44,28 +53,10 @@
   </section>
 
   <section aria-labelledby="ss-h">
-    <div class="sec-head"><h2 id="ss-h">Season by creek</h2><span class="sec-sub" id="ss-sub"></span></div>
+    <div class="sec-head"><h2 id="ss-h">Season by stream</h2><span class="sec-sub" id="ss-sub"></span></div>
     <div id="season"></div>
-    <p class="legend">New redds are counted once, on the visit they were first flagged. "With adults" is redds where adults were present when found or re-checked. Peak adults is the highest count of adult cutthroat on a single visit.</p>
+    <p class="legend">Redds are counted on the visit they were found. "Age 1" redds are the fresh ones — those are the ones that date spawning to the week of the survey.</p>
   </section>
-
-  <details class="panel" id="howto">
-    <summary><h2>How to survey</h2><span class="sec-sub">method</span></summary>
-    <div class="panel-in">
-      <ol class="steps">
-        <li><b>Same reach, about every 7 days, February to May.</b> Cutthroat redds stay visible for about two weeks (average 13 days, none longer than 20), so a longer gap misses redds.</li>
-        <li><b>Go as flows drop.</b> Spawning appears to pause during freshets and peak as the water falls. If you can't see the bottom of riffles, record the visit as visibility 3 and come back.</li>
-        <li><b>Walk upstream, slowly, off the gravel.</b> Wear polarized glasses and a cap. Never step on a redd.</li>
-        <li><b>Flag every new redd.</b> Write the redd ID and date on flagging tied on the bank just upstream. On the next visit, check each old flag: still visible or gone. Only unflagged redds are new.</li>
-        <li><b>For every redd: confidence, and adults present or absent.</b> Adults are rarely on redds. In a six-year cutthroat study, fewer than 3% of 544 redds had a fish on them. "Absent" is the usual answer and it's still useful data.</li>
-        <li><b>Count adult cutthroat in the reach.</b> Count only fish about 25 cm or longer. Smaller fish are likely parr or smolts.</li>
-        <li><b>If you see a spawning pair, record it carefully.</b> Note the time, count, behaviour and a photo or video. It may be one of the first documented in the watershed.</li>
-        <li><b>Record nil visits.</b> A walk with no redds and no adults is a record. Repeated visits are how the project measures absence and how often adults are missed.</li>
-        <li><b>Keep the same crew on the same creeks.</b> Redd counts vary with experience, so consistent surveyors make years comparable.</li>
-      </ol>
-      <p class="hint">Based on the weekly redd-count method of Losee, Phillips &amp; Young (2016, Skookum Creek, Puget Sound), which followed the Gallagher &amp; Gallagher (2005) protocol. The redd re-check and confidence follow Gallagher, Hahn &amp; Johnson (2007, AFS Salmonid Field Protocols Handbook) and ODFW's 2026 spawning-survey manual. The visibility codes are ODFW's. The volunteer-friendly form layout follows Trout Unlimited's Redd Survey Handbook (2019).</p>
-    </div>
-  </details>
 
   <section aria-labelledby="ex-h">
     <div class="sec-head"><h2 id="ex-h">Export</h2><span class="sec-sub" id="ex-sub"></span></div>
@@ -81,26 +72,50 @@
       <button type="button" class="ghost" data-csv="summary">Season summary</button>
       <button type="button" class="ghost" data-csv="surveys">Surveys</button>
       <button type="button" class="ghost" data-csv="redds">Redds</button>
-      <button type="button" class="ghost" data-csv="detections">Detections</button>
     </div>
-    <p class="legend">Four tables: a <b>season summary</b> by creek, every <b>survey</b> visit, every <b>redd</b> with its re-check history, and a <b>detections</b> table (one row per visit: redds found 1/0, adults seen 1/0) laid out for occupancy and detection analysis.</p>
+    <p class="legend">Three tables: a <b>season summary</b> by stream, every <b>survey</b> with its duration and conditions, and every <b>redd</b> with its measurements, age and GPS point.</p>
   </section>
+
+  <details class="panel" id="howto">
+    <summary><h2>Quick reference</h2><span class="sec-sub">in the field</span></summary>
+    <div class="panel-in">
+      <div class="field">
+        <span class="lab">Redd age</span>
+        <div class="agekey">
+          <div><b>1</b><span>Fresh. Clean gravel, no algae growth. This redd was built since the last freshet — it dates spawning to about now.</span></div>
+          <div><b>2</b><span>Some algae growth, no fish present. Still measurable, but older than a week or two.</span></div>
+          <div><b>3</b><span>Full algae growth, no longer measurable. Record it, but don't measure it.</span></div>
+        </div>
+      </div>
+      <div class="field">
+        <span class="lab">Measuring a redd</span>
+        <p class="hint"><b>Length</b> runs from the upstream edge of the pit to the downstream end of the tailspill mound. <b>Width</b> is the widest point across the disturbed gravel. Both in centimetres.</p>
+        <p class="hint">Cutthroat pits run roughly 20–75 cm, averaging about 48 × 43 cm. Coho redds are considerably larger. Coho will be finished by the cutthroat window, but their redds are still on the bed, so the measurement is how you tell them apart.</p>
+      </div>
+      <div class="field">
+        <span class="lab">Visibility</span>
+        <p class="hint"><b>1</b> — bottom of riffles and pools visible. <b>2</b> — riffles only. <b>3</b> — can't see the bottom; not surveyable, so zero redds doesn't mean absence.</p>
+      </div>
+      <div class="field">
+        <span class="lab">The rules that matter</span>
+        <ul class="tightlist">
+          <li>Walk upstream so you aren't looking through your own silt.</li>
+          <li>Never step on a redd, or on gravel that might be one.</li>
+          <li>Write the date and the number of redds on the flagging tape.</li>
+          <li>A walk that finds nothing is still a survey. Save it.</li>
+        </ul>
+      </div>
+      <p class="hint">Full method, creek list and timing: <b>CCT Spawner &amp; Redd Survey Protocol v0.1</b>. Method basis: <a href="METHODS.md">METHODS.md</a>.</p>
+    </div>
+  </details>
 
   <details class="panel" id="settings">
     <summary><h2>Settings and backup</h2><span class="sec-sub" id="bk-sub"></span></summary>
     <div class="panel-in">
       <div class="field">
-        <label for="s-obs">Surveyors (default)</label>
-        <input type="text" id="s-obs" maxlength="80" autocomplete="name" placeholder="e.g. crew initials">
+        <label for="s-crew">Crew initials (default)</label>
+        <input type="text" id="s-crew" maxlength="40" placeholder="e.g. CM, JL">
         <p class="hint">Filled in on each new survey. Change it per survey if the crew changes.</p>
-      </div>
-      <div class="field">
-        <span class="lab">GPS</span>
-        <div class="chips" id="s-gps">
-          <button type="button" class="chip" data-v="auto" aria-pressed="false">Grab automatically</button>
-          <button type="button" class="chip" data-v="ask" aria-pressed="false">Only when I tap</button>
-        </div>
-        <p class="hint">GPS works without cell service. Under heavy canopy it can take up to a minute.</p>
       </div>
       <div class="field">
         <span class="lab">Backup</span>
@@ -115,7 +130,7 @@
           <summary>How backups work</summary>
           <ul>
             <li><b>What it is:</b> one file with every survey and redd on this phone.</li>
-            <li><b>Where to keep it:</b> email it to yourself or the project lead, or save it to Files, Google Drive or iCloud.</li>
+            <li><b>Where to keep it:</b> email it to yourself or the project lead, or save it to Files, Drive or iCloud.</li>
             <li><b>It looks strange, and that's normal.</b> It's the app's own format, not a spreadsheet. Use Export for a readable copy.</li>
             <li><b>Don't edit it.</b> Changing anything can stop it from restoring.</li>
             <li><b>To restore:</b> tap <b>Restore from a backup</b> and pick the file. Restoring only adds or updates. It never deletes.</li>
@@ -124,7 +139,7 @@
       </div>
       <div class="field">
         <span class="lab">Your data</span>
-        <p class="hint">Nothing is uploaded. There are no accounts or servers. Surveys stay on this phone until a crew member exports or backs them up and chooses who to send them to.</p>
+        <p class="hint">Nothing is uploaded. There are no accounts and no server. Surveys stay on this phone until a crew member exports or backs them up and chooses who to send them to.</p>
       </div>
       <div class="field">
         <span class="lab">Install</span>
@@ -143,7 +158,7 @@
 <div class="dock" id="dock"><div class="dock-in"><button type="button" class="primary" id="startBtn">Start a survey</button></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-<!-- survey visit -->
+<!-- ============ survey sheet ============ -->
 <div class="sheet" id="surveySheet" role="dialog" aria-modal="true" aria-labelledby="sv-title" hidden>
   <form id="surveyForm" novalidate>
     <div class="sheet-head">
@@ -152,105 +167,148 @@
     </div>
     <div class="sheet-scroll"><div class="sheet-body">
       <p class="hint" id="sv-saved">Saved on this phone as you go.</p>
+
       <div class="sec-card">
-        <h3>1 · Where and who</h3>
-        <div class="field"><label for="sv-creek">Creek</label><select id="sv-creek"></select>
-          <input type="text" id="sv-creekNew" maxlength="80" placeholder="Name of the creek" aria-label="New creek name" hidden></div>
+        <h3>1 · Stream, crew and date</h3>
+        <div class="field">
+          <label for="sv-stream">Stream</label>
+          <input type="text" id="sv-stream" list="streamList" maxlength="80" placeholder="Type or pick the stream" autocomplete="off" autocapitalize="words">
+          <datalist id="streamList"></datalist>
+          <p class="hint">Any name works. The list suggests the project's creeks.</p>
+        </div>
+        <div class="field">
+          <label for="sv-reach">Reach <span class="opt">optional</span></label>
+          <input type="text" id="sv-reach" list="reachList" maxlength="40" placeholder="e.g. Index reach" autocomplete="off">
+          <datalist id="reachList"></datalist>
+        </div>
         <div class="grid2">
-          <div class="field"><label for="sv-reach">Reach</label><input type="text" id="sv-reach" list="reachList" maxlength="40" placeholder="e.g. Index reach" autocomplete="off"><datalist id="reachList"></datalist></div>
+          <div class="field"><label for="sv-crew">Crew initials</label><input type="text" id="sv-crew" maxlength="40" placeholder="CM, JL" autocomplete="off"></div>
           <div class="field"><label for="sv-date">Date</label><input type="date" id="sv-date"></div>
         </div>
-        <div class="grid2">
-          <div class="field"><label for="sv-obs">Surveyors</label><input type="text" id="sv-obs" maxlength="80"></div>
+      </div>
+
+      <!-- ===== timer ===== -->
+      <div class="sec-card timer-card" id="timerCard">
+        <h3>2 · Survey time</h3>
+        <div class="clock" id="clock">0:00</div>
+        <p class="clock-sub" id="clockSub">Tap start when you step in at the bottom of the reach.</p>
+        <div class="clock-btns">
+          <button type="button" class="big-btn go" id="timerMain">Start</button>
+          <button type="button" class="big-btn stop" id="timerStop" hidden>Stop</button>
+        </div>
+        <div class="times-row">
           <div class="field"><label for="sv-start">Start time</label><input type="time" id="sv-start"></div>
-        </div>
-        <div class="field"><span class="lab">GPS start (bottom of reach)</span><div data-gps="sv-gpsStart"></div></div>
-      </div>
-
-      <div class="sec-card">
-        <h3>2 · Conditions</h3>
-        <div class="field"><span class="lab">Visibility</span><div class="chips stack" data-chip="vis"></div></div>
-        <p class="warn" id="visWarn" hidden>Visibility 3: too turbid to count redds reliably. Save the visit anyway (it's still data). It will be flagged, and it won't count as a "not found" visit.</p>
-        <div class="field"><span class="lab">Flow</span><div class="chips" data-chip="flow"></div></div>
-        <div class="field"><span class="lab">Flow trend</span><div class="chips" data-chip="trend"></div><p class="hint">Spawning tends to pick up as flows drop after a freshet.</p></div>
-        <div class="field"><label for="sv-wt">Water temp (optional)</label><div class="unit" style="max-width:180px"><input type="number" id="sv-wt" inputmode="decimal" step="0.1" min="-1" max="30"><span>°C</span></div></div>
-      </div>
-
-      <div class="sec-card">
-        <h3>3 · Redds</h3>
-        <div id="checksWrap" hidden>
-          <p class="lab">Flagged on earlier visits: check each flag</p>
-          <div class="obs-list" id="checksList"></div>
-        </div>
-        <p class="lab">New redds (no flag yet)</p>
-        <div class="obs-list" id="reddList"></div>
-        <button type="button" class="primary" id="addRedd">+ New redd</button>
-      </div>
-
-      <div class="sec-card">
-        <h3>4 · Adults in the reach</h3>
-        <div class="field"><label for="sv-adults">Live adult cutthroat seen (about 25 cm or longer)</label>
-          <div class="stepper" data-min="0" data-max="999"><button type="button" data-step="-1" aria-label="One fewer">−</button><input type="number" id="sv-adults" inputmode="numeric" min="0" max="999" value="0"><button type="button" data-step="1" aria-label="One more">+</button></div>
-          <p class="hint" id="adultsHint">Include fish on redds. Count each fish once.</p>
-        </div>
-        <div class="field"><label for="sv-carc">Cutthroat carcasses</label>
-          <div class="stepper" data-min="0" data-max="999"><button type="button" data-step="-1" aria-label="One fewer">−</button><input type="number" id="sv-carc" inputmode="numeric" min="0" max="999" value="0"><button type="button" data-step="1" aria-label="One more">+</button></div>
-        </div>
-        <div class="field"><span class="lab">Other spawners seen (tap any)</span><div class="chips" data-chip="others" data-multi="1"></div>
-          <p class="hint">Helps attribute redds. Coho and chum finish earlier, but steelhead overlap the cutthroat window.</p></div>
-      </div>
-
-      <div class="sec-card">
-        <h3>5 · Finish</h3>
-        <div class="summary-box" id="svSummary"></div>
-        <div class="field"><label for="sv-notes">Notes</label><textarea id="sv-notes" maxlength="1500" placeholder="Access, barriers, beaver dams, anything unusual"></textarea></div>
-        <div class="field"><span class="lab">GPS end (top of reach)</span><div data-gps="sv-gpsEnd"></div></div>
-        <div class="grid2">
           <div class="field"><label for="sv-end">End time</label><input type="time" id="sv-end"></div>
         </div>
+        <p class="hint">The clock keeps running if you lock the phone or close the app. You can type the times by hand if you forget to start it.</p>
+      </div>
+
+      <div class="sec-card">
+        <h3>3 · Water</h3>
+        <div class="field">
+          <label for="sv-wt">Water temperature</label>
+          <div class="unit" style="max-width:200px"><input type="number" id="sv-wt" inputmode="decimal" step="0.1" min="-1" max="30" placeholder="—"><span>°C</span></div>
+        </div>
+        <div class="field"><span class="lab">Visibility</span><div class="chips stack" data-chip="vis"></div></div>
+        <p class="warn" id="visWarn" hidden>Visibility 3: too turbid to count redds. Save the survey anyway — it's still a record — but zero redds here is not an absence.</p>
+        <div class="grid2">
+          <div class="field"><span class="lab">Flow</span><div class="chips" data-chip="flow"></div></div>
+          <div class="field"><span class="lab">Trend</span><div class="chips" data-chip="trend"></div></div>
+        </div>
+      </div>
+
+      <!-- ===== redds ===== -->
+      <div class="sec-card">
+        <h3>4 · Redds</h3>
+        <div class="obs-list" id="reddList"></div>
+        <button type="button" class="trigger-btn" id="addRedd">
+          <span class="tb-plus" aria-hidden="true">+</span>
+          <span class="tb-txt"><b>Redd found</b><small>Opens the measurement and age</small></span>
+        </button>
+      </div>
+
+      <div class="sec-card">
+        <h3>5 · Fish seen</h3>
+        <div class="field"><span class="lab">Cutthroat in the reach</span><div class="chips big2" data-chip="fish"></div></div>
+        <div class="field" id="fishNBox" hidden>
+          <label for="sv-fishn">How many adults (about 25 cm or longer)</label>
+          <div class="stepper" data-min="1" data-max="999"><button type="button" data-step="-1" aria-label="One fewer">−</button><input type="number" id="sv-fishn" inputmode="numeric" min="1" max="999" value="1"><button type="button" data-step="1" aria-label="One more">+</button></div>
+          <p class="hint">Count each fish once, including any on a redd. Smaller fish are likely parr or smolts.</p>
+        </div>
+        <div class="field"><span class="lab">Other species seen (tap any)</span><div class="chips" data-chip="others" data-multi="1"></div>
+          <p class="hint">Coho and chum finish before the cutthroat window, but their redds stay on the bed. Steelhead overlap it.</p></div>
+      </div>
+
+      <div class="sec-card">
+        <h3>6 · Notes and finish</h3>
+        <div class="summary-box" id="svSummary"></div>
+        <div class="field"><label for="sv-notes">Notes on the survey</label><textarea id="sv-notes" maxlength="2000" placeholder="Observations, other species, other redds seen, access, barriers, beaver dams, channel change, anything unusual"></textarea></div>
         <button type="button" class="primary" id="finishBtn">Finish survey</button>
-        <p class="hint">Fills in the end time and GPS end if they're blank.</p>
+        <p class="hint">Stops the clock and fills in the end time if it's blank.</p>
         <div><button type="button" class="danger-link" id="delSurvey">Delete this survey</button></div>
       </div>
     </div></div>
   </form>
 </div>
 
-<!-- new redd -->
+<!-- ============ redd sheet ============ -->
 <div class="sheet sub" id="reddSheet" role="dialog" aria-modal="true" aria-labelledby="rd-title" hidden>
   <form id="reddForm" novalidate>
-    <div class="sheet-head"><h2 id="rd-title" tabindex="-1">New redd</h2><button type="button" class="ghost" data-close="reddSheet">Cancel</button></div>
+    <div class="sheet-head"><h2 id="rd-title" tabindex="-1">Redd</h2><button type="button" class="ghost" data-close="reddSheet">Cancel</button></div>
     <div class="sheet-scroll"><div class="sheet-body">
       <div class="grid2">
-        <div class="field"><label for="rd-id">Redd ID</label><input type="text" id="rd-id" maxlength="30" autocomplete="off"><p class="hint">Write it on the flag.</p></div>
+        <div class="field"><label for="rd-id">Redd ID</label><input type="text" id="rd-id" maxlength="30" autocomplete="off"><p class="hint">Goes on the flagging tape.</p></div>
         <div class="field"><label for="rd-time">Time</label><input type="time" id="rd-time"></div>
       </div>
-      <div class="field"><span class="lab">GPS</span><div data-gps="rd-gps"></div></div>
 
-      <div class="field"><span class="lab">Confidence it's a redd</span><div class="chips stack" data-chip="conf"></div></div>
+      <div class="field">
+        <label for="rd-gps">GPS point</label>
+        <input type="text" id="rd-gps" maxlength="60" placeholder="49.70123, -123.15456" autocomplete="off" inputmode="text">
+        <p class="hint" id="gpsRead">Read it off the handheld and type it in. Decimal degrees or UTM both work.</p>
+      </div>
 
-      <div class="field"><span class="lab">Adults on the redd?</span><div class="chips big2" data-chip="adults"></div></div>
+      <div class="field">
+        <span class="lab">Redd age</span>
+        <div class="chips stack" data-chip="age"></div>
+      </div>
+
+      <div class="sec-card" id="measBox">
+        <h3>Measurements</h3>
+        <div class="grid2">
+          <div class="field">
+            <label for="rd-len">Length</label>
+            <div class="unit"><input type="number" id="rd-len" inputmode="decimal" min="0" max="500" step="1" data-range="20,80"><span>cm</span></div>
+            <p class="range" data-for="rd-len">Upstream edge of the pit to the downstream end of the mound</p>
+          </div>
+          <div class="field">
+            <label for="rd-wid">Width</label>
+            <div class="unit"><input type="number" id="rd-wid" inputmode="decimal" min="0" max="500" step="1" data-range="15,80"><span>cm</span></div>
+            <p class="range" data-for="rd-wid">Widest point across the disturbed gravel</p>
+          </div>
+        </div>
+        <p class="sizeread" id="sizeRead" hidden></p>
+      </div>
+      <p class="warn" id="age3Warn" hidden>Age 3 redds have full algae growth and are no longer measurable. Leave the measurements blank and just record that it's there.</p>
+
+      <div class="field"><span class="lab">Adults on this redd?</span><div class="chips big2" data-chip="adults"></div></div>
       <div class="sec-card" id="adultBox" hidden>
         <h3>Adults on this redd</h3>
         <div class="field"><label for="rd-n">How many</label>
           <div class="stepper" data-min="1" data-max="20"><button type="button" data-step="-1" aria-label="One fewer">−</button><input type="number" id="rd-n" inputmode="numeric" min="1" max="20" value="1"><button type="button" data-step="1" aria-label="One more">+</button></div></div>
         <div class="field"><span class="lab">Species</span><div class="chips" data-chip="sp"></div></div>
         <div class="field"><span class="lab">What were they doing? (tap any)</span><div class="chips" data-chip="beh" data-multi="1"></div></div>
-        <div class="field"><label for="rd-photos">Photo / video IDs</label><input type="text" id="rd-photos" maxlength="80" placeholder="e.g. IMG_2041, VID_0007"></div>
-        <p class="warn" id="pairNote" hidden>A spawning pair: possibly one of the first documented in the watershed. Note the time, get a photo or video if you can without disturbing them, and stay off the gravel.</p>
+        <p class="warn" id="pairNote" hidden>A spawning pair. Possibly one of the first documented in this watershed. Note the time, get a photo or video if you can do it from the bank, and stay off the gravel.</p>
       </div>
 
+      <div class="field"><span class="lab">Whose redd? (best call)</span><div class="chips" data-chip="who"></div>
+        <p class="hint">Use the measurement, the timing and any fish present together. Never the shape alone.</p></div>
+
       <details class="more" id="rd-more">
-        <summary>Measure and describe (optional)</summary>
+        <summary>More detail (optional)</summary>
         <div class="more-in">
-          <div class="grid2">
-            <div class="field"><label for="rd-pitL">Pit length</label><div class="unit"><input type="number" id="rd-pitL" inputmode="decimal" min="0" max="500" step="1" data-range="20,75"><span>cm</span></div><p class="range" data-for="rd-pitL">CCT pits mostly 20–75 cm</p></div>
-            <div class="field"><label for="rd-pitW">Pit width</label><div class="unit"><input type="number" id="rd-pitW" inputmode="decimal" min="0" max="500" step="1" data-range="20,75"><span>cm</span></div><p class="range" data-for="rd-pitW">CCT pits mostly 20–75 cm</p></div>
-          </div>
           <div class="field"><span class="lab">Where in the channel</span><div class="chips" data-chip="hab"></div></div>
-          <div class="field"><span class="lab">Whose redd? (best call)</span><div class="chips" data-chip="who"></div><p class="hint">Don't call it cutthroat on shape alone. Use timing, fish present and size together.</p></div>
-          <div class="field"><label for="rd-rphotos">Redd photo IDs</label><input type="text" id="rd-rphotos" maxlength="80" placeholder="with something for scale"></div>
-          <div class="field"><label for="rd-notes">Notes</label><textarea id="rd-notes" maxlength="800"></textarea></div>
+          <div class="field"><label for="rd-photos">Photo / video IDs</label><input type="text" id="rd-photos" maxlength="80" placeholder="e.g. IMG_2041 — include something for scale"></div>
+          <div class="field"><label for="rd-notes">Notes on this redd</label><textarea id="rd-notes" maxlength="800"></textarea></div>
         </div>
       </details>
     </div></div>
